@@ -45,7 +45,7 @@ __u32 xdp_test(struct xdp_md *xdp) {
 
   val = lookup_elem(iph->saddr);
   if (val) {
-    bpf_printk("xdp_blocker: found %pI4 in the block list, dropping packet", bpf_ntohl(*val));
+    bpf_printk("xdp_blocker: found %pI4 in the block list, dropping packet", val);
     action = XDP_DROP;
     goto out;
   }

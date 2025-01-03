@@ -4,7 +4,7 @@ all: build
 build:
 	cargo libbpf make
 
-HEADERS="src/common/bpf/$(shell uname -i)"
+HEADERS="src/bpf"
 
 .PHONY: vmlinux
 vmlinux:

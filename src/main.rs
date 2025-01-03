@@ -71,7 +71,7 @@ fn main() -> Result<()> {
     };
 
     let key = unsafe { plain::as_bytes(&key) };
-    let value = block_ip.to_be();
+    let value = block_ip.to_le();
 
     skel.maps
         .block_list
