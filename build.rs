@@ -27,6 +27,7 @@ mod bpf {
                 .source(&SRC)
                 .clang_args([
                     "-Isrc/common/bpf/x86_64",
+                    "-I/usr/include/x86_64-linux-gnu",
                     "-fno-unwind-tables",
                     "-D__TARGET_ARCH_x86",
                 ])
@@ -37,6 +38,7 @@ mod bpf {
                 .source(&SRC)
                 .clang_args([
                     "-Isrc/common/bpf/aarch64",
+                    "-I/usr/include/aarch64-linux-gnu",
                     "-fno-unwind-tables",
                     "-D__TARGET_ARCH_arm64",
                 ])

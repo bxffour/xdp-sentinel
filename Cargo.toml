@@ -13,3 +13,4 @@ thiserror = "2.0.9"
 nix = { version = "0.28", default-features = false, features = ["net", "user"] }
 libc = "0.2.169"
 ctrlc = "3.4.5"
+plain = "0.2.3"

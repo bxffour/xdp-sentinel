@@ -7,7 +7,9 @@ mod xdp_blocker {
 
 use std::{
     mem::MaybeUninit,
+    net::Ipv4Addr,
     os::fd::AsFd,
+    str::FromStr,
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -18,8 +20,9 @@ use std::{
 
 use libbpf_rs::{
     skel::{OpenSkel, SkelBuilder},
-    Xdp, XdpFlags,
+    ErrorExt, MapCore, MapFlags, Xdp, XdpFlags,
 };
+use nix::net::if_::if_nametoindex;
 use xdp_blocker::*;
 use xdp_sentinel::prelude::*;
 
@@ -52,15 +55,35 @@ fn main() -> Result<()> {
     let open_skel = skel_builder.open(&mut open_object).unwrap();
     let skel = open_skel.load().unwrap();
 
+    let iface_name = "enp1s0";
+    let idx = if_nametoindex(iface_name).unwrap() as i32;
+    println!("{iface_name} has index {idx}");
+
     let xdp = Xdp::new(skel.progs.xdp_test.as_fd());
-    xdp.attach(1, XdpFlags::SKB_MODE).unwrap();
+    xdp.attach(idx, XdpFlags::SKB_MODE).unwrap();
     println!("successfully attached xdp program");
+
+    let block_ip = Ipv4Addr::from_str("192.168.122.1").unwrap();
+    let block_ip: u32 = block_ip.into();
+    let key = types::ipv4_lpm_key {
+        prefixlen: (32_u32),
+        data: block_ip.to_be(),
+    };
+
+    let key = unsafe { plain::as_bytes(&key) };
+    let value = block_ip.to_be();
+
+    skel.maps
+        .block_list
+        .update(key, &value.to_be_bytes(), MapFlags::ANY)
+        .context("update new record to map fail")
+        .unwrap();
 
     while running.load(Ordering::SeqCst) {
         sleep(Duration::new(1, 0));
     }
 
-    xdp.detach(1, XdpFlags::SKB_MODE).unwrap();
+    xdp.detach(idx, XdpFlags::SKB_MODE).unwrap();
     println!("successfully detached xdp program");
     Ok(())
 }

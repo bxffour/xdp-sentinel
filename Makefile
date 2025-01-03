@@ -4,6 +4,9 @@ all: build
 build:
 	cargo libbpf make
 
+HEADERS="src/common/bpf/$(shell uname -i)"
+
 .PHONY: vmlinux
 vmlinux:
-	bpftool btf dump file /sys/kernel/btf/vmlinux format c > src/bpf/vmlinux.h
+	mkdir -p $(HEADERS)
+	bpftool btf dump file /sys/kernel/btf/vmlinux format c > $(HEADERS)/vmlinux.h
