@@ -1,0 +1,24 @@
+# Configuration for the eBPF-based blocking program
+
+# List of network interfaces by their numeric identifiers (e.g., indices)
+interfaces = ["docker0"] # all
+log_level = "debug"
+
+[blocking]
+# Maximum allowed requests within the burst period
+burst_limit = "100"
+
+# Burst period in seconds
+burst_period_secs = "60"
+
+# Temporary ban duration in seconds for the first offense
+initial_ban_duration = "300"
+
+# Multiplier for increasing ban duration after repeated offenses
+ban_multiplier = "2"
+
+# Maximum duration for temporary ban in seconds
+max_temp_ban_duration = "3600"
+
+# Number of repeated offenses after which the IP is banned permanently
+permanent_ban_threshold = "5"

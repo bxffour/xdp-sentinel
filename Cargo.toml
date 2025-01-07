@@ -14,3 +14,8 @@ nix = { version = "0.28", default-features = false, features = ["net", "user"] }
 libc = "0.2.169"
 ctrlc = "3.4.5"
 plain = "0.2.3"
+serde = "1.0.217"
+serde-aux = "4.5.0"
+config = "0.15.4"
+log = "0.4.22"
+flexi_logger = "0.29.8"
